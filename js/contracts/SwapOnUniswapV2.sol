@@ -22,7 +22,7 @@ contract SwapOnUniswapV2 {
     address _token0,
     address _token1,
     uint256 _flashAmount
-  ) external {
+  ) external view {
     uint256 balanceBefore = IERC20(_token0).balanceOf(address(this));
 
     bytes memory data = abi.encode(
@@ -33,6 +33,8 @@ contract SwapOnUniswapV2 {
       balanceBefore
     );
   }
+
+  function executeSuperTrades() external {}
 
   function _swapOnExchangeA(
     address[] memory _path,

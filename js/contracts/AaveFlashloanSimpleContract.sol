@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: SEE LICENSE IN LICENSE
+// SPDX-License-Identifier: Victor Ogbebor
 pragma solidity ^0.8.4;
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import "@openzeppelin/contracts/utils/math/SafeMath.sol";
@@ -34,8 +34,12 @@ contract AaveFlashloanSimpleContract is FlashLoanSimpleReceiverBase {
         Steps (Assuming we borrow WETH)       
         1) call executeTrades() on Arb Contract
         * Call Uniswap Functions to swap for usdc 
-        * Call Sushiswap Functions to swap for usdc
-        
+        * Call Sushiswap Functions to swap for weth
+
+        2) call executeSuperTrades() on Arb Contract
+        * Call Uniswap Functions to swap for usdc 
+        * Call Uniswap Functions to swap for usdt
+        * Call Sushiswap Functions to swap for weth
        */
 
     uint256 amountToPayback = amount.add(premium);
