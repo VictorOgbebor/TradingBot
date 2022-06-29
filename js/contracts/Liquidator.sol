@@ -4,9 +4,11 @@ import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 import "./defi-interfaces/aave/interfaces/IPool.sol";
 import "./defi-interfaces/aave/interfaces/FlashLoanSimpleReceiverBase.sol";
+
+// import uniswap
 import "hardhat/console.sol";
 
-contract AaveFlashloanSimpleContract is FlashLoanSimpleReceiverBase {
+contract Arbitrager is FlashLoanSimpleReceiverBase {
   using SafeMath for uint256;
   using SafeERC20 for IERC20;
 
@@ -16,6 +18,16 @@ contract AaveFlashloanSimpleContract is FlashLoanSimpleReceiverBase {
   constructor(IPoolAddressesProvider provider)
     FlashLoanSimpleReceiverBase(provider)
   {}
+
+  // this will activate the flashloan
+  function MakeMoney(
+    address token,
+    uint256 amount,
+    address user
+  ) external {
+    user = address(this); // or msg.sender for now until...
+    IPool(address(POOL)).flashLoanSimple(user, token, amount, "0x", 0);
+  }
 
   // This will execute the trades and move the money
   function executeOperation(
@@ -30,18 +42,10 @@ contract AaveFlashloanSimpleContract is FlashLoanSimpleReceiverBase {
       "Invalid Balance for the contract"
     );
     console.log("AmountBorrowed", amount);
-    /*
-        Steps using uniswap funcs => (Assuming we borrow WETH) 
-              
-        1) call executeTrades() on Arb Contract
-        * Call Uniswap Functions to swap for usdc 
-        * Call Sushiswap Functions to swap for weth
 
-        2) call executeSuperTrades() on Arb Contract
-        * Call Uniswap Functions to swap for usdc 
-        * Call Uniswap Functions to swap for usdt
-        * Call Sushiswap Functions to swap for weth
-       */
+    /*
+      Call the liquidation() logic here
+    */
 
     uint256 amountToPayback = amount.add(premium);
     require(
@@ -52,7 +56,7 @@ contract AaveFlashloanSimpleContract is FlashLoanSimpleReceiverBase {
     emit LoanFinished(asset, amountToPayback);
 
     // Approve Pool contract allowancr to payback loan amount
-    approvePool(asset, address(POOL), amountToPayback);
+    approve_pool(asset, address(POOL), amountToPayback);
 
     // transfer remaining balance to address or multisig escrow
     uint256 remained = IERC20(asset).balanceOf(address(this));
@@ -63,21 +67,11 @@ contract AaveFlashloanSimpleContract is FlashLoanSimpleReceiverBase {
   }
 
   /**Internal Func */
-  function approvePool(
+  function approve_pool(
     address token,
     address to,
     uint256 amountIn
   ) internal {
     require(IERC20(token).approve(to, amountIn), "approve failed");
-  }
-
-  // this will activate the flashloan
-  function aave_flashloan(
-    address token,
-    uint256 amount,
-    address user
-  ) external {
-    user = address(this); // or msg.sender for now until...
-    IPool(address(POOL)).flashLoanSimple(user, token, amount, "0x", 0);
   }
 }

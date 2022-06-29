@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: SEE LICENSE IN LICENSE
 pragma solidity 0.6.6;
-import "./defi-interfaces/uniswap/interfaces/v2/IUniswapV2Router.sol";
-import "./defi-interfaces/uniswap/interfaces/v2/IUniswapV2Router02.sol";
-import "./defi-interfaces/uniswap/interfaces/v2/IERC20.sol";
+import "./uniswap/interfaces/v2/IUniswapV2Router.sol";
+import "./uniswap/interfaces/v2/IUniswapV2Router02.sol";
+import "./uniswap/interfaces/v2/IERC20.sol";
 
 contract SwapOnUniswapV2 {
   IUniswapV2Router public RouterA; // uniswap
@@ -34,8 +34,11 @@ contract SwapOnUniswapV2 {
     );
   }
 
-  function executeSuperTrades() external {}
+// multihop
+  function executeSuperTrade() external {}
 
+
+// internal funcs
   function _swapOnExchangeA(
     address[] memory _path,
     uint256 _amountIn,
