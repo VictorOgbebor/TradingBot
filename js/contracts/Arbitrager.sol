@@ -26,7 +26,9 @@ contract Arbitrager is FlashLoanSimpleReceiverBase {
     address user
   ) external {
     user = address(this); // or msg.sender for now until...
-    IPool(address(POOL)).flashLoanSimple(user, token, amount, "0x", 0);
+    uint256 balance = IERC20(token).balanceOf(address(this)); // balance before loan happens
+    bytes memory data = abi.encode(token, amount, balance);
+    IPool(address(POOL)).flashLoanSimple(user, token, amount, data, 0);
   }
 
   // This will execute the trades and move the money
