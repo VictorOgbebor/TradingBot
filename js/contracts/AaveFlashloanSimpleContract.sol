@@ -31,7 +31,8 @@ contract AaveFlashloanSimpleContract is FlashLoanSimpleReceiverBase {
     );
     console.log("AmountBorrowed", amount);
     /*
-        Steps (Assuming we borrow WETH)       
+        Steps using uniswap funcs => (Assuming we borrow WETH) 
+              
         1) call executeTrades() on Arb Contract
         * Call Uniswap Functions to swap for usdc 
         * Call Sushiswap Functions to swap for weth
@@ -69,8 +70,6 @@ contract AaveFlashloanSimpleContract is FlashLoanSimpleReceiverBase {
   ) internal {
     require(IERC20(token).approve(to, amountIn), "approve failed");
   }
-
-  // uniswap funcs
 
   // this will activate the flashloan
   function aave_flashloan(
